@@ -30,7 +30,7 @@ function createPieChart(data) {
     canvas.width = 400;
     document.body.appendChild(canvas);
 
-    const ctx = document.getElementById("mychart").getContext("2d");
+    const ctx = document.getElementById("myChart").getContext("2d");
 
     const graph = {
         type: "pie",
