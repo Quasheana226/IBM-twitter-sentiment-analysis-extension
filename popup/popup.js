@@ -70,11 +70,19 @@ function createPieChart(data) {
 // analyzed before the popup was opened.
 // NOTE: Replace "chrome" with "browser" if deploying to Firefox.
 
+<<<<<<< HEAD
 chrome.runtime.sendMessage({ type: "getSentiment" });
  
 // Listen for sentiment updates broadcast by the background script.
 // The chart is recreated on every update so it always reflects the latest data.
 chrome.runtime.onMessage.addListener(function (message) {
+=======
+browser.runtime.sendMessage({ type: "getSentiment" });
+ 
+// Listen for sentiment updates broadcast by the background script.
+// The chart is recreated on every update so it always reflects the latest data.
+browser.runtime.onMessage.addListener(function (message) {
+>>>>>>> ce14da8 (fix: switch extension API calls from chrome to browser for Firefox compatibility)
   if (message.type === "sentimentValues") sentimentValues = message.data;
   createPieChart(sentimentValues);
 });

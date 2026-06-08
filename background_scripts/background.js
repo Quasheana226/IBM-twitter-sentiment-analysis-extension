@@ -66,7 +66,7 @@ function counSentiments(obj) {
  * 
  */
 
-chrome.runtime.onMessage.addListner(function (message) {
+    browser.runtime.onMessage.addListner(function (message) {
     //Update the local sentiment cache when the content script semds mew data 
     if(message.type === "sentiment") tweetSentiment = message.data;
 
@@ -74,7 +74,7 @@ chrome.runtime.onMessage.addListner(function (message) {
   // Recalculate counts and push updated values to the popup.
   // This runs on every message so the popup stays in sync automatically.
   sentimentValues = countSentiments(tweetSentiment);
-  chrome.runtime.sendMessage({
+  browser.runtime.sendMessage({
     type: "sentimentValues",
     data: sentimentValues,
   });

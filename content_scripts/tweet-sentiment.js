@@ -4,7 +4,6 @@
 // and so we avoid re-analyzing the same tweet text more than once.
 tweetSentiment = {};
 
-
 /**
  * Analyzes the sentiment of a given string of text and broadcasts the result.
  *
@@ -28,10 +27,9 @@ function analyzeSentiment(text) {
     // Cache the result so we dont reproccess the same text on futur scroll events
     tweetSentiment[text] = sentiment;
 
-
     // Broadcast the updated sentiment map to the background script,
     // which will forward it to the popup for display in the chart
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         type: "sentiment",
         data: tweetSentiment,
 
