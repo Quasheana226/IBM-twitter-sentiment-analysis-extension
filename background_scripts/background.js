@@ -27,8 +27,7 @@ let sentimentValues = [];
  * @returns {number[]} Array of counts ordered as [negative, neutral, positive]
  */
 
-function counSentiments(obj) {
-
+    function countSentiments(obj) {
     // Convert the object's values into a flat array of sentiment scores
 
     let values = Object.values(obj);
