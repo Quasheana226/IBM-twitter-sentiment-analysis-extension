@@ -5,14 +5,14 @@
 let tweetSentiment = {};
 
 
- 
+
 // Holds the most recently calculated [negative, neutral, positive] counts.
 // Updated on every incoming message so the popup always gets fresh data.
 
 let sentimentValues = [];
 
 
- 
+
 /**
  * Counts the number of positive, negative, and neutral sentiments
  * from the cached tweetSentiment object.
@@ -27,29 +27,28 @@ let sentimentValues = [];
  * @returns {number[]} Array of counts ordered as [negative, neutral, positive]
  */
 
-
 function counSentiments(obj) {
-    
-  // Convert the object's values into a flat array of sentiment scores
 
-  let values = Object.values(obj);
+    // Convert the object's values into a flat array of sentiment scores
 
-  
-  // Single-pass count of each sentiment value using reduce.
-  // The -1 key is stringified because object keys must be strings.
-
-  let counts = values.reduce(
-    (acc, val) => {
-        acc[val == -1 ? String(val) : val]++;
-        return acc;
-    }, 
-    {"-1": 0, 0: 0, 1: 0}
-  );
+    let values = Object.values(obj);
 
 
-  // Return as an ordered array so callers don't need to know the key names
+    // Single-pass count of each sentiment value using reduce.
+    // The -1 key is stringified because object keys must be strings.
 
-  return Object.values(counts);
+    let counts = values.reduce(
+        (acc, val) => {
+            acc[val == -1 ? String(val) : val]++;
+            return acc;
+        },
+        { "-1": 0, 0: 0, 1: 0 }
+    );
+
+
+    // Return as an ordered array so callers don't need to know the key names
+
+    return Object.values(counts);
 
 
 }
@@ -66,16 +65,16 @@ function counSentiments(obj) {
  * 
  */
 
-    browser.runtime.onMessage.addListner(function (message) {
+browser.runtime.onMessage.addListener(function (message) {
     //Update the local sentiment cache when the content script semds mew data 
-    if(message.type === "sentiment") tweetSentiment = message.data;
+    if (message.type === "sentiment") tweetSentiment = message.data;
 
-    
-  // Recalculate counts and push updated values to the popup.
-  // This runs on every message so the popup stays in sync automatically.
-  sentimentValues = countSentiments(tweetSentiment);
-  browser.runtime.sendMessage({
-    type: "sentimentValues",
-    data: sentimentValues,
-  });
+
+    // Recalculate counts and push updated values to the popup.
+    // This runs on every message so the popup stays in sync automatically.
+    sentimentValues = countSentiments(tweetSentiment);
+    browser.runtime.sendMessage({
+        type: "sentimentValues",
+        data: sentimentValues,
+    });
 });
