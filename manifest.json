@@ -7,7 +7,7 @@
   "permissions": ["*://*/*"],
   "content_scripts": [
     {
-      "matches": ["*://twitter.com/*"],
+        "matches": ["*://twitter.com/*", "*://x.com/*"],
       "js": ["content_scripts/tweet-sentiment.js"]
     }
   ],
