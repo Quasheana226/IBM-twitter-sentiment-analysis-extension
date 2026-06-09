@@ -12,30 +12,53 @@ tweetSentiment = {};
  *
  * Scores:  1 = positive | -1 = negative | 0 = neutral
  *
- * @param {string} text - The full extracted text of a tweet
- * @returns {number} The sentiment score for the given text
+ *   
  *
  * NOTE: Replace "chrome" with "browser" if deploying to Firefox,
  * since Firefox uses the WebExtensions API under the "browser" namespace.
  */
 
+const controller = new AbortController();
+const signal = controller.signal;
 
-function analyzeSentiment(text) {
-    const sentiments = [1, -1, 0];
-    const sentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
+async function sendRequest(text) {
+  const containerUrl = ""; // MUST CHANGE
 
-    // Cache the result so we dont reproccess the same text on futur scroll events
-    tweetSentiment[text] = sentiment;
+  const postData = {
+    rawDocument: {
+      text: text,
+    },
+  };
 
-    // Broadcast the updated sentiment map to the background script,
-    // which will forward it to the popup for display in the chart
-    browser.runtime.sendMessage({
-        type: "sentiment",
-        data: tweetSentiment,
-
+  try {
+    const response = await fetch(containerUrl, {
+      method: "POST",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json",
+        "grpc-metadata-mm-model-id":
+          "sentiment_aggregated-cnn-workflow_lang_en_stock",
+      },
+      signal,
     });
+    const data = await response.json();
+    const label = data["documentSentiment"]["label"];
+    if (label == "SENT_POSITIVE") return 1;
+    if (label == "SENT_NEGATIVE") return -1;
+    return 0;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-    return
+async function analyzeSentiment(text) {
+  const sentiment = await sendRequest(text);
+  tweetSentiment[text] = sentiment;
+  browser.runtime.sendMessage({
+    type: "sentiment",
+    data: tweetSentiment,
+  });
+  return sentiment;
 }
 
 /**
